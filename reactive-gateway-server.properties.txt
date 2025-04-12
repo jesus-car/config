@@ -1,0 +1,16 @@
+eureka.client.serviceUrl.defaultZone=http://localhost:8761/eureka
+
+# Gateway Config
+spring.cloud.gateway.discovery.locator.enabled=true
+spring.cloud.gateway.discovery.locator.lowerCaseServiceId=true
+
+spring.cloud.gateway.routes[0].id=product-service
+spring.cloud.gateway.routes[0].uri=lb://product-service
+spring.cloud.gateway.routes[0].predicates[0]=Path=/api/v1/products/**
+
+spring.cloud.gateway.routes[1].id=item-service
+spring.cloud.gateway.routes[1].uri=lb://item-service
+spring.cloud.gateway.routes[1].predicates[0]=Path=/api/v1/items/**
+spring.cloud.gateway.routes[1].filters[0].name=CircuitBreaker
+spring.cloud.gateway.routes[1].filters[0].args[0].name=product-service
+spring.cloud.gateway.routes[1].filters[0].args[0].fallbackUri=forward:/fallback-product
